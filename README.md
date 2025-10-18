@@ -3,12 +3,12 @@
 An intelligent web application that automatically extracts and organizes bill information from receipt images using Google Gemini AI.
 ## ✨ Features
 
-- 🤖 AI-powered OCR using Google Gemini 2.0 Flash
-- 📊 Automatic extraction of merchant, date, amount, category, and items
-- 💾 PostgreSQL database for persistent storage
-- 🎨 Modern, responsive web interface
+- AI-powered OCR using Google Gemini 2.0 Flash
+- Automatic extraction of merchant, date, amount, category, and items
+- PostgreSQL database for persistent storage
+- Good Looking web interface
 - 📈 Real-time spending statistics
-- 🗑️ Easy bill management
+- Easy bill management
 
 ## 🛠️ Tech Stack
 
@@ -22,4 +22,5 @@ An intelligent web application that automatically extracts and organizes bill in
 - .NET SDK 8.0+
 - PostgreSQL 16+
 - Google Gemini API Key ([Get it free](https://ai.google.dev/))
+
 By - Amit Kumar
