@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Organizer - AI Powered</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
+        h1 { 
+            color: white; 
+            margin-bottom: 30px; 
+            text-align: center; 
+            font-size: 42px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .upload-section { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            margin-bottom: 30px; 
+        }
+        .upload-section h2 { 
+            color: #34495e; 
+            margin-bottom: 20px; 
+            font-size: 24px;
+        }
+        input[type="file"] { 
+            padding: 15px; 
+            border: 2px dashed #667eea; 
+            border-radius: 8px; 
+            width: 100%; 
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        input[type="file"]:hover {
+            border-color: #764ba2;
+            background: #f8f9fa;
+        }
+        button { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            padding: 15px 40px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled { 
+            background: #95a5a6; 
+            cursor: not-allowed;
+            transform: none;
+        }
+        .loading { 
+            display: none; 
+            color: #667eea; 
+            margin-top: 15px;
+            font-weight: 600;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .bills-header {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .bills-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+            gap: 25px; 
+        }
+        .bill-card { 
+            background: white; 
+            border-radius: 15px; 
+            padding: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .bill-card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3); 
+        }
+        .bill-header { 
+            border-bottom: 3px solid #667eea; 
+            padding-bottom: 15px; 
+            margin-bottom: 15px; 
+        }
+        .merchant-name { 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: #2c3e50; 
+            margin-bottom: 8px; 
+        }
+        .bill-date { 
+            color: #7f8c8d; 
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .total-amount { 
+            font-size: 32px; 
+            color: #27ae60; 
+            font-weight: bold; 
+            text-align: center; 
+            margin: 20px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .category-badge { 
+            display: inline-block; 
+            padding: 8px 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            border-radius: 25px; 
+            font-size: 13px; 
+            margin-top: 10px;
+            font-weight: 600;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+        }
+        .items-section { 
+            margin-top: 20px; 
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .items-title { 
+            font-size: 16px; 
+            font-weight: bold; 
+            color: #34495e; 
+            margin-bottom: 10px; 
+        }
+        .item { 
+            padding: 10px; 
+            background: white; 
+            margin-bottom: 8px; 
+            border-radius: 8px; 
+            display: flex; 
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .item-name {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .item-price {
+            color: #27ae60;
+            font-weight: 600;
+        }
+        .delete-btn { 
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            padding: 10px 25px; 
+            font-size: 14px; 
+            margin-top: 15px;
+            width: 100%;
+        }
+        .delete-btn:hover { 
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+        }
+        .empty-state { 
+            text-align: center; 
+            padding: 60px 20px; 
+            color: white;
+            font-size: 18px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            flex: 1;
+            min-width: 200px;
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Bill Organizer</h1>
+        <p style="text-align: center; color: white; margin-bottom: 30px; font-size: 18px;">
+            Powered by Gemini AI ✨
+        </p>
+
+        <div class="upload-section">
+            <h2>🚀 Upload New Bill</h2>
+            <p style="color: #7f8c8d; margin-bottom: 15px;">
+                Upload a receipt or bill image. AI will automatically extract merchant name, date, amount, category, and all items!
+            </p>
+            <input type="file" id="fileInput" accept="image/*">
+            <button onclick="uploadBill()" id="uploadBtn">📤 Upload & Extract Data</button>
+            <div class="loading" id="loading">⏳ AI is analyzing your bill... Please wait (5-15 seconds)</div>
+        </div>
+
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-card">
+                <div class="stat-number" id="totalBills">0</div>
+                <div class="stat-label">Total Bills</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalSpent">$0.00</div>
+                <div class="stat-label">Total Spent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="avgBill">$0.00</div>
+                <div class="stat-label">Average Bill</div>
+            </div>
+        </div>
+
+        <h2 class="bills-header">💰 Your Bills</h2>
+        <div class="bills-grid" id="billsContainer"></div>
+        <div class="empty-state" id="emptyState">
+            📭 No bills yet. Upload your first receipt to get started!
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5006/api/Bills';
+
+        // Load bills when page loads
+        window.onload = () => {
+            loadBills();
+        };
+
+        async function uploadBill() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('⚠️ Please select a file first!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            document.getElementById('uploadBtn').disabled = true;
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const response = await fetch(`${API_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const bill = await response.json();
+                    alert(`✅ Bill processed successfully!\n\n` +
+                          `Merchant: ${bill.merchantName}\n` +
+                          `Amount: $${bill.totalAmount}\n` +
+                          `Category: ${bill.category}`);
+                    fileInput.value = '';
+                    loadBills();
+                } else {
+                    alert('❌ Error uploading bill. Please try again.');
+                }
+            } catch (error) {
+                alert('❌ Network error: ' + error.message + '\n\nMake sure your API is running on http://localhost:5006');
+            } finally {
+                document.getElementById('uploadBtn').disabled = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        async function loadBills() {
+            try {
+                const response = await fetch(API_URL);
+                const bills = await response.json();
+
+                const container = document.getElementById('billsContainer');
+                const emptyState = document.getElementById('emptyState');
+                const stats = document.getElementById('stats');
+
+                if (bills.length === 0) {
+                    container.innerHTML = '';
+                    emptyState.style.display = 'block';
+                    stats.style.display = 'none';
+                    return;
+                }
+
+                // Calculate statistics
+                const totalSpent = bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+                const avgBill = totalSpent / bills.length;
+
+                document.getElementById('totalBills').textContent = bills.length;
+                document.getElementById('totalSpent').textContent = `$${totalSpent.toFixed(2)}`;
+                document.getElementById('avgBill').textContent = `$${avgBill.toFixed(2)}`;
+                stats.style.display = 'flex';
+
+                emptyState.style.display = 'none';
+                container.innerHTML = bills.map(bill => `
+                    <div class="bill-card">
+                        <div class="bill-header">
+                            <div class="merchant-name">${bill.merchantName}</div>
+                            <div class="bill-date">📅 ${new Date(bill.billDate).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}</div>
+                        </div>
+
+                        <div class="total-amount">💰 $${bill.totalAmount.toFixed(2)}</div>
+
+                        <span class="category-badge">${bill.category}</span>
+
+                        ${bill.items && bill.items.length > 0 ? `
+                            <div class="items-section">
+                                <div class="items-title">📝 Items (${bill.items.length}):</div>
+                                ${bill.items.map(item => `
+                                    <div class="item">
+                                        <span class="item-name">${item.itemName} × ${item.quantity}</span>
+                                        <span class="item-price">$${item.price.toFixed(2)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : '<p style="color: #95a5a6; margin-top: 15px; text-align: center;">No items extracted</p>'}
+
+                        <button class="delete-btn" onclick="deleteBill(${bill.id})">🗑️ Delete Bill</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading bills:', error);
+                alert('❌ Error loading bills: ' + error.message + '\n\nMake sure your API is running on http://localhost:5006');
+            }
+        }
+
+        async function deleteBill(id) {
+            if (!confirm('⚠️ Are you sure you want to delete this bill?\n\nThis action cannot be undone.')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('✅ Bill deleted successfully!');
+                    loadBills();
+                } else {
+                    alert('❌ Error deleting bill. Please try again.');
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
