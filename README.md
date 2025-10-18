@@ -7,7 +7,7 @@ An intelligent web application that automatically extracts and organizes bill in
 - Automatic extraction of merchant, date, amount, category, and items
 - PostgreSQL database for persistent storage
 - Good Looking web interface
-- 📈 Real-time spending statistics
+- Real-time spending statistics
 - Easy bill management
 
 ## 🛠️ Tech Stack
