@@ -23,6 +23,7 @@ An intelligent web application that automatically extracts and organizes bill in
 - Models - Contains Bill.cs and BillItem.cs classes that define the structure of your data objects
 - Services - Houses GeminiService.cs which handles all AI integration logic for extracting data from bill images
 - Uploads - Stores all uploaded bill images that users submit through the frontend(its just an empty folder that just stores images bills)
+
 (easy for the AI to take the binary img and process it using base64 encoding, finally returns a json response back to us from google server)
 
 ## 📋 Prerequisites
